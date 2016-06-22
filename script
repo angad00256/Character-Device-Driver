@@ -1,0 +1,89 @@
+#! /bin/bash
+	
+remove()
+{
+	rmmod modules/mydriver.ko
+	rm -r modules
+	rm Module.symvers
+	rm modules.order
+	rm writerapp
+	rm drivernode
+	rm app
+	rm *.o
+
+	lsmod
+	read
+	dmesg -c
+	read
+	cat /proc/modules
+	read
+	cat /proc/devices
+	read
+
+	echo "Deletion Successful..."
+}
+		
+insert()
+{
+		insmod modules/mydriver.ko nod=5
+		read
+		lsmod
+		read
+		dmesg -c
+		read
+		cat /proc/modules
+		read
+		cat /proc/devices
+		read
+
+		echo "Insertion Successful..."
+		read
+		
+		echo "Enter the major number"
+		read majorno
+		echo "Enter the minor number"
+		read minorno
+
+		mknod drivernode c $majorno $minorno
+
+		echo "Node Created Successfully..."
+		read
+
+		ls -al
+		read
+
+		echo "Do you want to run the application (y/n)"
+		read response
+		if [ $response = 'y' ]
+		then
+			if ( make -f appmakefile )
+			then
+				echo "Application succesfully compiled..."
+				read
+				./app drivernode
+				read
+				dmesg -c	
+				read
+			else
+				echo "Application compilation failed...)"
+				read
+			fi
+		fi	
+		
+		remove
+}
+
+if ( make )
+then
+	echo "Make Successful..."
+	echo "Do you want to insert the driver (y/n)"
+	read response
+	if [ $response = 'y' ]
+	then
+		insert
+	fi
+else
+	echo "Make Failed..."
+fi
+
+exit 0

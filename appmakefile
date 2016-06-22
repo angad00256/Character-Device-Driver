@@ -1,0 +1,22 @@
+#! /bin/bash
+
+app: application.o writerapp.o readerapp.o apporigin.o
+
+	gcc -o app application.o writerapp.o readerapp.o apporigin.o
+
+application.o: application.c appheaders.h
+
+	gcc -c application.c
+
+writer.o: writerapp.c appheaders.h
+
+	gcc -c writerapp.c
+
+reader.o: readerapp.c appheaders.h
+
+	gcc -c readerapp.c
+
+apporigin.o: apporigin.c appheaders.h
+
+	gcc -c apporigin.c
+
